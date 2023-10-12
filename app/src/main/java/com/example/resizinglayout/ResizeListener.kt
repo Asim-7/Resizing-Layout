@@ -3,7 +3,6 @@ package com.example.resizinglayout
 import android.annotation.SuppressLint
 import android.view.MotionEvent
 import android.view.View
-import android.view.WindowManager
 import androidx.constraintlayout.widget.ConstraintLayout
 import kotlin.math.roundToInt
 
@@ -27,9 +26,14 @@ class ResizeListener : View.OnTouchListener {
             }
 
             MotionEvent.ACTION_MOVE -> {
-                params.width = (initialWidth + (event.rawX - initialTouchX)).roundToInt()
-                params.height = (initialHeight + (event.rawY - initialTouchY)).roundToInt()
+                val yDifference = (event.rawY - initialTouchY)
+                val ratioDifference = 0.733  // width to height ratio of original layout
+                params.width = (initialWidth + yDifference * ratioDifference).roundToInt()
+                params.height = (initialHeight + yDifference).roundToInt()
                 binding.floatingView.layoutParams = params
+
+                val scaleFactor: Float = params.height.toFloat() / ResizeUtil.originalHeight
+                ResizeUtil.resizeLayout(scaleFactor)
                 return true
             }
 
